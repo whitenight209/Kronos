@@ -116,7 +116,7 @@ class AlarmScheduler @Inject constructor(
                 continue
             }
 
-            if (a.cronExpression.isNotEmpty()) {
+            if (a.cronExpression != null) {
 
                 val next = CronUtilsHelper.getNextExecution(a.cronExpression)
                 if (next > 0) {

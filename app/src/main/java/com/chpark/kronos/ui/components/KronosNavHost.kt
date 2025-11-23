@@ -1,5 +1,8 @@
 package com.chpark.kronos.ui.components
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,9 +23,11 @@ import com.chpark.kronos.screen.ExecutionHistoryDetailScreen
 import com.chpark.kronos.screen.ExecutionHistoryScreen
 import com.chpark.kronos.screen.SettingsScreen
 import com.chpark.kronos.ui.AppDestinations
-import com.chpark.kronos.ui.edit.AlarmEditScreen
+import com.chpark.kronos.screen.AlarmEditScreen
+import com.chpark.kronos.screen.CodeEditorScreen
 import com.chpark.kronos.ui.viewmodel.ExecutionHistoryViewModel
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun KronosNavHost(
     navController: NavHostController,
@@ -40,33 +45,108 @@ fun KronosNavHost(
             AlarmListScreen(navController)
         }
 
-        // HISTORY 목록
-        composable(AppDestinations.HISTORY.route) {
+        // HISTORY 목록 (Left → Right, Activity 스타일)
+        composable(
+            AppDestinations.HISTORY.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            }
+        ) {
             ExecutionHistoryScreen(
                 onItemClick = { entity ->
                     navController.navigate("history_detail/${entity.id}")
                 }
             )
         }
+
         // Alarm Edit
         composable(
             route = "alarm_edit/{id}",
             arguments = listOf(
                 navArgument("id") { type = NavType.LongType }
-            )
-        ) {
-            val id = it.arguments?.getLong("id") ?: 0L
+            ),
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            }
+        ) { backStack ->
+            val id = backStack.arguments?.getLong("id") ?: 0L
             AlarmEditScreen(
                 alarmId = id,
+                navController = navController,
                 onBack = { navController.popBackStack() }
             )
         }
 
-
-        // HISTORY 상세 화면
+        // HISTORY 상세
         composable(
             route = "history_detail/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.LongType })
+            arguments = listOf(navArgument("id") { type = NavType.LongType }),
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            }
         ) { backStack ->
             val historyViewModel: ExecutionHistoryViewModel = hiltViewModel()
             val id = backStack.arguments?.getLong("id")!!
@@ -80,7 +160,7 @@ fun KronosNavHost(
                 )
             } else {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -89,8 +169,63 @@ fun KronosNavHost(
         }
 
         // SETTINGS
-        composable(AppDestinations.SETTINGS.route) {
+        composable(
+            AppDestinations.SETTINGS.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            }
+        ) {
             SettingsScreen()
+        }
+        composable(
+            "code_editor",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(250)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(250)
+                )
+            }
+        ) {
+            CodeEditorScreen({}, {})
         }
     }
 }

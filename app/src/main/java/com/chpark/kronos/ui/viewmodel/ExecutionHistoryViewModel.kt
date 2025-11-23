@@ -5,23 +5,32 @@ import androidx.lifecycle.viewModelScope
 import com.chpark.kronos.data.entity.ExecutionHistoryEntity
 import com.chpark.kronos.data.repository.ExecutionHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class HistoryUiState(
+    val isLoading: Boolean = true,
+    val data: List<ExecutionHistoryEntity> = emptyList()
+)
 
 @HiltViewModel
 class ExecutionHistoryViewModel @Inject constructor(
     private val repository: ExecutionHistoryRepository
 ) : ViewModel() {
 
-    val histories: StateFlow<List<ExecutionHistoryEntity>> =
+    val uiState: StateFlow<HistoryUiState> =
         repository.getAllFlow()
+            .map { list ->
+                HistoryUiState(
+                    isLoading = false,
+                    data = list
+                )
+            }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
-                emptyList()
+                HistoryUiState()
             )
 
     suspend fun getById(id: Long): ExecutionHistoryEntity? =
@@ -32,6 +41,7 @@ class ExecutionHistoryViewModel @Inject constructor(
             repository.insert(entity)
         }
     }
+
     fun clearAll() {
         viewModelScope.launch {
             repository.clearAll()

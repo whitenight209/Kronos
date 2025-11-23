@@ -9,8 +9,11 @@ data class AlarmEntity(
     var id: Long = 0L,
 
     var name: String = "",
-    var cronExpression: String = "",
+    var description: String = "",
+    val useCron: Boolean,          // ★ cron 활성/비활성 명시
+    val cronExpression: String,     // 빈 문자열 허용, null 없음
     var nextTriggerTime: Long = 0L,
     var command: String = "",
-    var enableScreenshot: Boolean = false
+    var enableScreenshot: Boolean = false,
+    val useSu: Boolean,                 // su 권한 여부
 )

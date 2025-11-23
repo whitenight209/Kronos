@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,6 +71,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.webkit)
     val room_version = "2.8.3"
 
     implementation("androidx.room:room-runtime:$room_version")
@@ -104,5 +107,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.57.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     ksp("com.google.dagger:hilt-android-compiler:2.57.2")
+    implementation(platform("io.github.rosemoe:editor-bom:0.24.0"))
+    implementation("io.github.rosemoe:editor")
+    implementation("io.github.rosemoe:language-textmate")
 
 }
