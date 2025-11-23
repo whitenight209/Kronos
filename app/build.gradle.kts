@@ -59,8 +59,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,7 +69,6 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.webkit)
     val room_version = "2.8.3"
 
     implementation("androidx.room:room-runtime:$room_version")
