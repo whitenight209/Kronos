@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
     private fun startAppUI() {
         setContent {
             KronosTheme {
-                KronosApp()   // 기존 Compose UI 실행
+                KronosApp(activity = this)   // 기존 Compose UI 실행
             }
         }
     }

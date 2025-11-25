@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 data class AlarmEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
-
     var name: String = "",
     var description: String = "",
     val useCron: Boolean,          // ★ cron 활성/비활성 명시

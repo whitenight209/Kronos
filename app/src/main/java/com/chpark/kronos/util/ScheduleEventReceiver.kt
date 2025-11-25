@@ -35,20 +35,17 @@ class ScheduleEventReceiver : BroadcastReceiver() {
         val id = intent.getLongExtra("id", 0L)
         val name = intent.getStringExtra("name") ?: "(이름 없음)"
         val cronExpr = intent.getStringExtra("cronExpr")
-        val command = intent.getStringExtra("command")
 
         // 즉시 알림 표시
         sendNotification(context, name)
 
         CoroutineScope(Dispatchers.IO).launch {
-
             // ① 알람 엔티티 로드
             val alarm = alarmRepository.findById(id)
             if (alarm == null) {
                 Log.e(TAG, "Alarm not found id=$id")
                 return@launch
             }
-
             // ② 다음 실행시간 계산 + 재등록
             if (!cronExpr.isNullOrEmpty()) {
                 val next = getNextExecution(cronExpr)
@@ -58,34 +55,17 @@ class ScheduleEventReceiver : BroadcastReceiver() {
                 // Hilt 주입된 Scheduler 사용
                 alarmScheduler.schedule(context, alarm)
             }
-
             // ③ 스크립트 실행
-            if (!command.isNullOrEmpty()) {
-                try {
-                    val resId = context
-                        .resources
-                        .getIdentifier(command, "raw", context.packageName)
-
-                    if (resId == 0) {
-                        Log.e(TAG, "Script resource not found: $command")
-                        return@launch
-                    }
-
-                    val executor = ScriptExecutor(
-                        context = context,
-                        scriptResId = resId,
-                        alarm = alarm,
-                        isScheduled = true,
-                        historyRepo = historyRepository
-                    )
-
-                    executor.execute()
-
-                } catch (e: Exception) {
-                    Log.e(TAG, "ScriptExecutor exception", e)
-                }
-            } else {
-                Log.e(TAG, "No command for alarm id=$id")
+            try {
+                val executor = ScriptExecutor(
+                    context = context,
+                    alarm = alarm,
+                    isScheduled = true,
+                    historyRepo = historyRepository
+                )
+                executor.execute()
+            } catch (e: Exception) {
+                Log.e(TAG, "ScriptExecutor exception", e)
             }
         }
     }

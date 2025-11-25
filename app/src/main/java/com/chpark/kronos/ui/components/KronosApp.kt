@@ -1,6 +1,7 @@
 package com.chpark.kronos.ui.components
 
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,10 +24,13 @@ import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.chpark.kronos.ui.AppDestinations
+import kotlin.math.acos
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KronosApp() {
+fun KronosApp(
+    activity: ComponentActivity
+) {
     val navController = rememberNavController()
 
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
@@ -79,6 +83,7 @@ fun KronosApp() {
         ) { innerPadding ->
             KronosNavHost(
                 navController = navController,
+                activity = activity,
                 modifier = Modifier.padding(innerPadding)
             )
         }
