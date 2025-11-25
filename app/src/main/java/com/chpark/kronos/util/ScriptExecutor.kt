@@ -5,14 +5,11 @@ import android.util.Log
 import com.chpark.kronos.data.entity.AlarmEntity
 import com.chpark.kronos.data.entity.ExecutionHistoryEntity
 import com.chpark.kronos.data.repository.ExecutionHistoryRepository
-import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.File
-import java.io.InputStreamReader
 
 class ScriptExecutor(
     private val context: Context,
-    private val scriptResId: Int,
     private val alarm: AlarmEntity,
     private val isScheduled: Boolean,
     private val historyRepo: ExecutionHistoryRepository
@@ -58,42 +55,28 @@ class ScriptExecutor(
     // ─────────────────────────────────────────────
     // 스크립트 읽기
     // ─────────────────────────────────────────────
-    private fun readScriptByName(name: String): List<String> {
+
+
+    private fun readCommand(): List<String> {
         val result = mutableListOf<String>()
-
-        val rawName = name.substringBefore(".")
-        val resId = context.resources.getIdentifier(rawName, "raw", context.packageName)
-
-        if (resId == 0) {
-            Log.e(TAG, "raw resource not found for name=$name")
-            return result
-        }
-
-        try {
-            context.resources.openRawResource(resId).use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream)).use { br ->
-                    br.lineSequence().forEach { raw ->
-                        var line = raw.trim()
-                        if (!isScheduled && line.contains("keyevent")) {
-                            val skipList = mutableListOf<Int?>(224, 82, 3, 223)
-                            val keyCode: Int = parseKeyEvent(line)
-                            if (skipList.contains(keyCode)) return@forEach
-                        }
-                        if (line.isEmpty()) return@forEach
-                        if (line.startsWith("#!") ||
-                            (line.startsWith("#") && !line.startsWith("#screenshot"))
-                        ) return@forEach
-
-                        result.add(line)
-                    }
-                }
+        val split = alarm.command.split("\n")
+        split.forEach {
+            val line = it.trim()
+            if (!isScheduled && line.contains("keyevent")) {
+                val skipList = mutableListOf<Int?>(224, 82, 3, 223)
+                val keyCode: Int = parseKeyEvent(line)
+                if (skipList.contains(keyCode)) return@forEach
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "readScript error", e)
+            if (line.isEmpty()) return@forEach
+            if (line.startsWith("#!") ||
+                (line.startsWith("#") && !line.startsWith("#screenshot"))
+            ) return@forEach
+            result.add(line)
         }
 
         return result
     }
+
     private fun parseKeyEvent(keyEvent: String): Int {
         if (keyEvent.trim { it <= ' ' }.isEmpty()) {
             throw RuntimeException("key event can't be null!")
@@ -101,6 +84,7 @@ class ScriptExecutor(
         return keyEvent.split("keyevent".toRegex()).dropLastWhile { it.isEmpty() }
             .toTypedArray()[1].trim { it <= ' ' }.toInt()
     }
+
     // ─────────────────────────────────────────────
     // Shell 명령 실행
     // ─────────────────────────────────────────────
@@ -151,10 +135,8 @@ class ScriptExecutor(
     // ─────────────────────────────────────────────
     fun execute(): Boolean {
         var success = false
-        val scriptLines = readScriptByName(alarm.command)
-
+        val scriptLines = readCommand()
         createHistory()
-
         try {
             val process = Runtime.getRuntime().exec("su")
             val os = DataOutputStream(process.outputStream)

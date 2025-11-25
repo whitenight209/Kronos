@@ -107,7 +107,7 @@ fun AlarmCard(
 
             // ---------- 내용 ----------
             Text("Cron: ${alarm.cronExpression}", style = MaterialTheme.typography.bodyMedium)
-            Text("Command: ${alarm.command}", style = MaterialTheme.typography.bodySmall)
+            Text("Description: ${alarm.description}", style = MaterialTheme.typography.bodySmall)
             Text("Screenshot: ${alarm.enableScreenshot}", style = MaterialTheme.typography.bodySmall)
 
             val displayTime = remember(alarm.nextTriggerTime) {

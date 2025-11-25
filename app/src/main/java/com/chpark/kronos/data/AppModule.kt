@@ -25,7 +25,9 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "app.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
 
     @Provides fun provideAlarmDao(db: AppDatabase) = db.alarmDao()
     @Provides fun provideHistoryDao(db: AppDatabase) = db.historyDao()

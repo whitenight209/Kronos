@@ -31,7 +31,6 @@ class AlarmScheduler @Inject constructor(
             putExtra("id", alarm.id)
             putExtra("name", alarm.name)
             putExtra("cronExpr", alarm.cronExpression)
-            putExtra("command", alarm.command)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -80,7 +79,6 @@ class AlarmScheduler @Inject constructor(
         executor.execute {
             val exec = ScriptExecutor(
                 context = context,
-                scriptResId = alarm.id.toInt(),
                 alarm = alarm,
                 isScheduled = false,
                 historyRepo = historyRepository
@@ -116,7 +114,7 @@ class AlarmScheduler @Inject constructor(
                 continue
             }
 
-            if (a.cronExpression.isNotEmpty()) {
+            if (a.cronExpression != null) {
 
                 val next = CronUtilsHelper.getNextExecution(a.cronExpression)
                 if (next > 0) {

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.clickable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import kotlinx.coroutines.delay
 
 enum class HistoryFilter { ALL, SUCCESS, FAILURE }
 
@@ -32,13 +33,19 @@ fun ExecutionHistoryScreen(
     viewModel: ExecutionHistoryViewModel = hiltViewModel(),
     onItemClick: (ExecutionHistoryEntity) -> Unit
 ) {
-    val histories by viewModel.histories.collectAsState()
+    val state by viewModel.uiState.collectAsState()
+
     var filter by remember { mutableStateOf(HistoryFilter.ALL) }
 
-    val filtered = when (filter) {
-        HistoryFilter.ALL -> histories
-        HistoryFilter.SUCCESS -> histories.filter { it.success }
-        HistoryFilter.FAILURE -> histories.filter { !it.success }
+    // 🔥 애니메이션이 끝날 때까지 UI 렌더링을 지연
+    val readyToRender = rememberDeferredRender(250L)
+
+    val filtered = remember(state.data, filter) {
+        when (filter) {
+            HistoryFilter.ALL -> state.data
+            HistoryFilter.SUCCESS -> state.data.filter { it.success }
+            HistoryFilter.FAILURE -> state.data.filter { !it.success }
+        }
     }
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -50,31 +57,51 @@ fun ExecutionHistoryScreen(
 
         HorizontalDivider()
 
-        if (filtered.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "실행 이력이 없습니다.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filtered, key = { it.id }) { item ->
-                    HistoryItemCard(
-                        entity = item,
-                        onClick = { onItemClick(item) }
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            when {
+                state.isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
                     )
+                }
+
+                !readyToRender -> {
+                    // 🔥 애니메이션 완료까지 스켈레톤/로딩 상태 유지
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                filtered.isEmpty() -> {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = "실행 이력이 없습니다.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(filtered, key = { it.id }) { item ->
+                            HistoryItemCard(
+                                entity = item,
+                                onClick = { onItemClick(item) }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun FilterChipsRow(
@@ -216,4 +243,13 @@ fun ScreenshotPreview(path: String) {
             style = MaterialTheme.typography.bodySmall
         )
     }
+}
+@Composable
+fun rememberDeferredRender(delayMillis: Long = 250L): Boolean {
+    var ready by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(delayMillis)
+        ready = true
+    }
+    return ready
 }

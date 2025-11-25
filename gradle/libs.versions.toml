@@ -15,6 +15,8 @@ materialIconsExtended = "1.7.8"
 roomCompiler = "2.8.3"
 runtimeLivedata = "1.9.4"
 navigationCompose = "2.9.6"
+ui = "1.9.5"
+constraintlayout = "2.2.1"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
@@ -39,6 +41,9 @@ androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compo
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version = "1.14.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

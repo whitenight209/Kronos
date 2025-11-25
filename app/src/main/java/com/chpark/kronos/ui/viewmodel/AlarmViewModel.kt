@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chpark.kronos.data.entity.AlarmEntity
 import com.chpark.kronos.data.repository.AlarmRepository
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
 import com.chpark.kronos.util.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -36,8 +35,11 @@ class AlarmViewModel @Inject constructor(
     fun saveAlarm(
         id: Long? = null,
         name: String,
+        description: String,
+        useCron: Boolean,
         cronExpression: String,
         command: String,
+        useSu: Boolean,
         enableScreenshot: Boolean,
         onDone: (AlarmEntity) -> Unit
     ) {
@@ -45,9 +47,12 @@ class AlarmViewModel @Inject constructor(
             val alarm = AlarmEntity(
                 id = id ?: 0L,
                 name = name,
+                useCron = useCron,
+                description = description,
                 cronExpression = cronExpression,
                 nextTriggerTime = System.currentTimeMillis(),
                 command = command,
+                useSu = useSu,
                 enableScreenshot = enableScreenshot
             )
 
@@ -75,8 +80,10 @@ class AlarmViewModel @Inject constructor(
         alarmScheduler.runNow(context, alarm)
     }
 
-    fun schedule(context: Context, alarm: AlarmEntity) {
-        alarmScheduler.schedule(context, alarm)
+    fun scheduleIfCronExpressionNotNull(context: Context, alarm: AlarmEntity) {
+        if (alarm.useCron) {
+            alarmScheduler.schedule(context, alarm)
+        }
     }
 
 }
