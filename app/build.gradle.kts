@@ -23,12 +23,21 @@ android {
     }
 
     buildTypes {
+        signingConfigs {
+            create("release") {
+                storeFile = file(project.properties["KRONOS_KEYSTORE"] as String)
+                storePassword = project.properties["KRONOS_STORE_PASSWORD"] as String
+                keyAlias = project.properties["KRONOS_KEY_ALIAS"] as String
+                keyPassword = project.properties["KRONOS_KEY_PASSWORD"] as String
+            }
+        }
         debug {
             applicationIdSuffix = ".dev"   //
             versionNameSuffix = "-dev"
         }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")  // 서명 적용
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -49,6 +58,48 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+
+
+tasks.register("generateKeystore") {
+
+    val keystorePath = project.properties["KRONOS_KEYSTORE"] as String
+    val keystoreFile = File(project.projectDir, keystorePath)
+
+    val storePassword = project.properties["KRONOS_STORE_PASSWORD"] as String
+    val keyPassword = project.properties["KRONOS_KEY_PASSWORD"] as String
+    val keyAlias = project.properties["KRONOS_KEY_ALIAS"] as String
+
+    doLast {
+        if (keystoreFile.exists()) {
+            println("Keystore already exists: ${keystoreFile.absolutePath}")
+            return@doLast
+        }
+
+        println("Generating keystore at: ${keystoreFile.absolutePath}")
+
+        val process = ProcessBuilder(
+            "keytool",
+            "-genkeypair",
+            "-v",
+            "-keystore", keystoreFile.absolutePath,
+            "-storepass", storePassword,
+            "-keypass", keyPassword,
+            "-alias", keyAlias,
+            "-keyalg", "RSA",
+            "-keysize", "2048",
+            "-validity", "10000",
+            "-dname", "CN=Kronos, OU=Dev, O=Company, L=Seoul, S=Seoul, C=KR"
+        )
+            .redirectErrorStream(true)
+            .start()
+
+        val output = process.inputStream.bufferedReader().readText()
+        process.waitFor()
+
+        println(output)
+        println("Keystore generated successfully.")
     }
 }
 
