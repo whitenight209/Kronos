@@ -3,18 +3,14 @@ package com.chpark.kronos.util
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.chpark.kronos.R
-import com.chpark.kronos.data.entity.AlarmEntity
-import com.chpark.kronos.util.AlarmScheduler
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
-import com.chpark.kronos.data.repository.AlarmRepository
+import com.chpark.kronos.data.repository.JobExecutionHistoryRepository
+import com.chpark.kronos.data.repository.JobRepository
 import com.chpark.kronos.util.CronUtilsHelper.getNextExecution
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +22,8 @@ import javax.inject.Inject
 class ScheduleEventReceiver : BroadcastReceiver() {
 
     @Inject lateinit var alarmScheduler: AlarmScheduler
-    @Inject lateinit var alarmRepository: AlarmRepository
-    @Inject lateinit var historyRepository: ExecutionHistoryRepository
+    @Inject lateinit var jobRepository: JobRepository
+    @Inject lateinit var historyRepository: JobExecutionHistoryRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "Alarm received!")
@@ -41,7 +37,7 @@ class ScheduleEventReceiver : BroadcastReceiver() {
 
         CoroutineScope(Dispatchers.IO).launch {
             // ① 알람 엔티티 로드
-            val alarm = alarmRepository.findById(id)
+            val alarm = jobRepository.findById(id)
             if (alarm == null) {
                 Log.e(TAG, "Alarm not found id=$id")
                 return@launch
@@ -50,7 +46,7 @@ class ScheduleEventReceiver : BroadcastReceiver() {
             if (!cronExpr.isNullOrEmpty()) {
                 val next = getNextExecution(cronExpr)
                 alarm.nextTriggerTime = next
-                alarmRepository.update(alarm)
+                jobRepository.update(alarm)
 
                 // Hilt 주입된 Scheduler 사용
                 alarmScheduler.schedule(context, alarm)

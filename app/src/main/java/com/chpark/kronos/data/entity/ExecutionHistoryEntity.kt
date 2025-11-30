@@ -3,7 +3,7 @@ package com.chpark.kronos.data.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "execution_history")
+@Entity(tableName = "job_execution_history")
 class ExecutionHistoryEntity {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0

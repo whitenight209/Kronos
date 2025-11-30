@@ -8,12 +8,12 @@ import com.chpark.kronos.data.entity.ExecutionHistoryEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ExecutionHistoryDao {
+interface JobExecutionHistoryDao {
 
-    @Query("SELECT * FROM execution_history ORDER BY executedAt DESC")
+    @Query("SELECT * FROM job_execution_history ORDER BY executedAt DESC")
     fun getAllFlow(): Flow<List<ExecutionHistoryEntity>>
 
-    @Query("DELETE FROM execution_history")
+    @Query("DELETE FROM job_execution_history")
     suspend fun clearAll()
 
     // ① 실행 기록 신규 등록
@@ -26,17 +26,17 @@ interface ExecutionHistoryDao {
     fun update(entity: ExecutionHistoryEntity)
 
     // ③ 특정 id 조회
-    @Query("SELECT * FROM execution_history WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM job_execution_history WHERE id = :id LIMIT 1")
     fun findById(id: Long): ExecutionHistoryEntity?
 
     // ④ 전체 히스토리 조회 (리스트 화면용)
-    @Query("SELECT * FROM execution_history ORDER BY executedAt DESC")
+    @Query("SELECT * FROM job_execution_history ORDER BY executedAt DESC")
     fun getAll(): List<ExecutionHistoryEntity>
 
-    @Query("SELECT * FROM execution_history WHERE id = :id")
+    @Query("SELECT * FROM job_execution_history WHERE id = :id")
     fun getHistoryById(id: Long): ExecutionHistoryEntity
 
 
-    @Query("SELECT * FROM execution_history WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM job_execution_history WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): ExecutionHistoryEntity?
 }

@@ -3,7 +3,7 @@ package com.chpark.kronos.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chpark.kronos.data.entity.ExecutionHistoryEntity
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
+import com.chpark.kronos.data.repository.JobExecutionHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.*
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ExecutionHistoryViewModel @Inject constructor(
-    private val repository: ExecutionHistoryRepository
+    private val repository: JobExecutionHistoryRepository
 ) : ViewModel() {
 
     /** 전체 히스토리 Flow */

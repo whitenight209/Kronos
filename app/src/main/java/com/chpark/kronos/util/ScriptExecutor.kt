@@ -2,17 +2,17 @@ package com.chpark.kronos.util
 
 import android.content.Context
 import android.util.Log
-import com.chpark.kronos.data.entity.AlarmEntity
+import com.chpark.kronos.data.entity.JobEntity
 import com.chpark.kronos.data.entity.ExecutionHistoryEntity
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
+import com.chpark.kronos.data.repository.JobExecutionHistoryRepository
 import java.io.DataOutputStream
 import java.io.File
 
 class ScriptExecutor(
     private val context: Context,
-    private val alarm: AlarmEntity,
+    private val alarm: JobEntity,
     private val isScheduled: Boolean,
-    private val historyRepo: ExecutionHistoryRepository
+    private val historyRepo: JobExecutionHistoryRepository
 ) {
 
     private var historyId = 0L

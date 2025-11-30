@@ -1,11 +1,5 @@
 package com.chpark.kronos.screen
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.provider.SyncStateContract.Helpers.update
-import android.webkit.JavascriptInterface
-import android.webkit.WebSettings
-import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,18 +8,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
-import com.chpark.kronos.ui.viewmodel.AlarmViewModel
+import com.chpark.kronos.ui.viewmodel.JobViewModel
 import com.chpark.kronos.util.showToast
 import com.chpark.kronos.viewmodel.CodeEditorViewModel
 
@@ -33,7 +22,7 @@ import com.chpark.kronos.viewmodel.CodeEditorViewModel
 @Composable
 fun AlarmEditScreen(
     editorVm: CodeEditorViewModel,
-    viewModel: AlarmViewModel = hiltViewModel(),
+    viewModel: JobViewModel = hiltViewModel(),
     alarmId: Long,
     onBack: () -> Unit,
     navController: NavHostController

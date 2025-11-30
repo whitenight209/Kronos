@@ -1,7 +1,6 @@
 package com.chpark.kronos.ui.components
 
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -22,17 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.chpark.kronos.data.entity.AlarmEntity
+import com.chpark.kronos.data.entity.JobEntity
 import com.chpark.kronos.util.formatTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmCard(
-    alarm: AlarmEntity,
-    onEdit: (AlarmEntity) -> Unit,
-    onRunNow: (AlarmEntity) -> Unit,
-    onDelete: (AlarmEntity) -> Unit = {}
+    alarm: JobEntity,
+    onEdit: (JobEntity) -> Unit,
+    onRunNow: (JobEntity) -> Unit,
+    onDelete: (JobEntity) -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
 

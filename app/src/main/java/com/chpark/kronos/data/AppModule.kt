@@ -2,10 +2,10 @@ package com.chpark.kronos.data
 
 import android.content.Context
 import androidx.room.Room
-import com.chpark.kronos.data.dao.AlarmDao
-import com.chpark.kronos.data.dao.ExecutionHistoryDao
-import com.chpark.kronos.data.repository.AlarmRepository
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
+import com.chpark.kronos.data.dao.JobDao
+import com.chpark.kronos.data.dao.JobExecutionHistoryDao
+import com.chpark.kronos.data.repository.JobRepository
+import com.chpark.kronos.data.repository.JobExecutionHistoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,9 +33,9 @@ object AppModule {
     @Provides fun provideHistoryDao(db: AppDatabase) = db.historyDao()
 
     @Provides @Singleton
-    fun provideAlarmRepository(dao: AlarmDao) = AlarmRepository(dao)
+    fun provideAlarmRepository(dao: JobDao) = JobRepository(dao)
 
     @Provides @Singleton
-    fun provideExecutionHistoryRepository(dao: ExecutionHistoryDao) =
-        ExecutionHistoryRepository(dao)
+    fun provideExecutionHistoryRepository(dao: JobExecutionHistoryDao) =
+        JobExecutionHistoryRepository(dao)
 }

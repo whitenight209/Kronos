@@ -2,7 +2,6 @@ package com.chpark.kronos
 
 import android.Manifest
 import android.app.AlarmManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 
@@ -17,9 +16,7 @@ import androidx.core.content.ContextCompat
 import com.chpark.kronos.ui.theme.KronosTheme
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import com.chpark.kronos.data.repository.AlarmRepository
 import com.chpark.kronos.ui.components.KronosApp
-import com.chpark.kronos.ui.viewmodel.AlarmViewModel
 import com.chpark.kronos.util.AlarmScheduler
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject

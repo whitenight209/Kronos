@@ -5,21 +5,21 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.chpark.kronos.data.entity.AlarmEntity
-import com.chpark.kronos.data.repository.AlarmRepository
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
+import com.chpark.kronos.data.entity.JobEntity
+import com.chpark.kronos.data.repository.JobRepository
+import com.chpark.kronos.data.repository.JobExecutionHistoryRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import java.util.concurrent.Executors
 
 @Singleton
 class AlarmScheduler @Inject constructor(
-    private val alarmRepository: AlarmRepository,
-    private val historyRepository: ExecutionHistoryRepository
+    private val jobRepository: JobRepository,
+    private val historyRepository: JobExecutionHistoryRepository
 ) {
 
     @SuppressLint("ScheduleExactAlarm")
-    fun schedule(context: Context, alarm: AlarmEntity) {
+    fun schedule(context: Context, alarm: JobEntity) {
 
         val alarmManager = context.getSystemService(AlarmManager::class.java)
 
@@ -51,7 +51,7 @@ class AlarmScheduler @Inject constructor(
     }
 
 
-    fun cancel(context: Context, alarm: AlarmEntity) {
+    fun cancel(context: Context, alarm: JobEntity) {
         val alarmManager = context.getSystemService(AlarmManager::class.java)
 
         val intent = Intent(context, ScheduleEventReceiver::class.java).apply {
@@ -72,7 +72,7 @@ class AlarmScheduler @Inject constructor(
 
 
     /** 즉시 실행 */
-    fun runNow(context: Context, alarm: AlarmEntity) {
+    fun runNow(context: Context, alarm: JobEntity) {
 
         val executor = Executors.newSingleThreadExecutor()
 
@@ -91,7 +91,7 @@ class AlarmScheduler @Inject constructor(
     /** Startup 시 전체 알람 재등록 */
     suspend fun registerAll(context: Context) {
 
-        val alarms = alarmRepository.getAll()
+        val alarms = jobRepository.getAll()
         val now = System.currentTimeMillis()
 
         for (a in alarms) {
@@ -119,10 +119,25 @@ class AlarmScheduler @Inject constructor(
                 val next = CronUtilsHelper.getNextExecution(a.cronExpression)
                 if (next > 0) {
                     a.nextTriggerTime = next
-                    alarmRepository.update(a)
+                    jobRepository.update(a)
                     schedule(context, a)
                 }
             }
         }
+    }
+
+    fun isScheduled(context: Context, alarm: JobEntity): Boolean {
+        val intent = Intent(context, ScheduleEventReceiver::class.java).apply {
+            putExtra("id", alarm.id)
+        }
+
+        val pi = PendingIntent.getBroadcast(
+            context,
+            alarm.id.toInt(),
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return pi != null
     }
 }

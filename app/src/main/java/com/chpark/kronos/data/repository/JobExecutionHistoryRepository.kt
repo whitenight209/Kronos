@@ -1,13 +1,13 @@
 package com.chpark.kronos.data.repository
 
-import com.chpark.kronos.data.dao.ExecutionHistoryDao
+import com.chpark.kronos.data.dao.JobExecutionHistoryDao
 import com.chpark.kronos.data.entity.ExecutionHistoryEntity
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 
-class ExecutionHistoryRepository @Inject constructor(
-    private val dao: ExecutionHistoryDao
+class JobExecutionHistoryRepository @Inject constructor(
+    private val dao: JobExecutionHistoryDao
 ) {
     fun getAllFlow() = dao.getAllFlow()
 

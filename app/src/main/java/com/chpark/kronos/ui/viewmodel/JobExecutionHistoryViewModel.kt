@@ -3,7 +3,7 @@ package com.chpark.kronos.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chpark.kronos.data.entity.ExecutionHistoryEntity
-import com.chpark.kronos.data.repository.ExecutionHistoryRepository
+import com.chpark.kronos.data.repository.JobExecutionHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ data class HistoryUiState(
 
 @HiltViewModel
 class ExecutionHistoryViewModel @Inject constructor(
-    private val repository: ExecutionHistoryRepository
+    private val repository: JobExecutionHistoryRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<HistoryUiState> =
