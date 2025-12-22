@@ -25,10 +25,10 @@ android {
     buildTypes {
         signingConfigs {
             create("release") {
-                storeFile = file(project.properties["KRONOS_KEYSTORE"] as String)
-                storePassword = project.properties["KRONOS_STORE_PASSWORD"] as String
-                keyAlias = project.properties["KRONOS_KEY_ALIAS"] as String
-                keyPassword = project.properties["KRONOS_KEY_PASSWORD"] as String
+                storeFile = file(project.findProperty("KRONOS_KEYSTORE") ?: "debug.keystore")
+                storePassword = project.findProperty("KRONOS_STORE_PASSWORD")?.toString()
+                keyAlias = project.findProperty("KRONOS_KEY_ALIAS")?.toString()
+                keyPassword = project.findProperty("KRONOS_KEY_PASSWORD")?.toString()
             }
         }
         debug {
@@ -101,6 +101,11 @@ tasks.register("generateKeystore") {
         println(output)
         println("Keystore generated successfully.")
     }
+}
+
+// 릴리즈 빌드 전에 항상 키스토어 생성 태스크를 확인하도록 연결
+tasks.matching { it.name.startsWith("validateSigningRelease") }.configureEach {
+    dependsOn("generateKeystore")
 }
 
 dependencies {

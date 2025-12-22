@@ -6,22 +6,24 @@ sleep 1
 #
 input keyevent 82
 sleep 1
+am force-stop com.olleh.android.oc2
+sleep 1
 # 앱 실행
 monkey -p com.olleh.android.oc2 -c android.intent.category.LAUNCHER 1
 sleep 10
 # 이벤트 닫기
 #screenshot
-input tap 920 2082
-sleep 2
+#input tap 920 2082
+#sleep 2
 # 더보기 진입
 #screenshot
-input tap 920 2060
+input tap 920 2175
 sleep 2
 # back
-input tap 850 2260
+input keyevent 4
 sleep 2
 # 출석 체크 화면 진입
-input tap 365 1685
+input tap 365 1700
 sleep 3
 # 출석 체크
 input tap 530 1770
